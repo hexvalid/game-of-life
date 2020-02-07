@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/binary"
 	"fmt"
 	"github.com/veandco/go-sdl2/sdl"
 	"math/rand"
@@ -9,11 +10,14 @@ import (
 )
 
 const (
-	gameSizeX, gameSizeY = 256, 256 //Default game size
-	cellSizeX, cellSizeY = 3, 3     //Size in pixes of each cell for SDL Window
-	chanceOfLive         = 0.5      //On randomize, the chance that each cell is populated
-	resetFactor          = 100      //If less than 1/resetFactor cells change in a generation, game will be restart
+	gameSizeX, gameSizeY = 128, 128 //Default game size
+	cellSizeX, cellSizeY = 5, 5     //Size in pixes of each cell for SDL Window
+	chanceOfLive         = 0.2      //On randomize, the chance that each cell is populated
+	resetFactor          = 90       //If less than 1/resetFactor cells change in a generation, game will be restart
+	fps                  = 25       // Game loop will slow itself down to match target
 )
+
+var colorOfCells uint32 = 0x00881111 //Cell Color
 
 type game struct {
 	xSize int    //Horizontal size of game table
@@ -185,7 +189,7 @@ func (g *game) DebugPrint() {
 }
 
 // Draw Game Table to SDL Surface
-func (g *game) DrawGame(surface *sdl.Surface) {
+func (g *game) DrawGame(color uint32, surface *sdl.Surface) {
 	// First create a dark background
 	bgrect := sdl.Rect{X: 0, Y: 0, W: int32(g.xSize) * cellSizeX, H: int32(g.ySize) * cellSizeY}
 	surface.FillRect(&bgrect, 0x11111111)
@@ -194,10 +198,17 @@ func (g *game) DrawGame(surface *sdl.Surface) {
 			if g.GetCell(x, y) {
 				// This cell is alive, draw it
 				rect := sdl.Rect{X: int32(x * cellSizeX), Y: int32(y * cellSizeY), W: cellSizeX, H: cellSizeY}
-				surface.FillRect(&rect, 0x00991111)
+				surface.FillRect(&rect, color)
 			}
 		}
 	}
+}
+
+func getRandomColor() uint32 {
+	rand.Seed(time.Now().UnixNano())
+	b := make([]byte, 8)
+	rand.Read(b)
+	return binary.LittleEndian.Uint32(b)
 }
 
 // Run Program
@@ -226,9 +237,12 @@ func main() {
 	}
 
 	running := true
-	for running {
 
-		g.DrawGame(surface)
+	for running {
+		// Begin measuring how long this loop takes
+		startTime := time.Now()
+
+		g.DrawGame(colorOfCells, surface)
 		window.UpdateSurface()
 		g.CreatePlan()
 		changed := g.RunPlan()
@@ -236,6 +250,8 @@ func main() {
 		// If less than totalCells / resetFactor cells are changed, reinitialize
 		if changed < (g.xSize*g.ySize)/resetFactor {
 			g.Randomize()
+			// Generate random color for every new game
+			colorOfCells = getRandomColor()
 		}
 
 		// Handle any SDL events that come in
@@ -245,6 +261,11 @@ func main() {
 				running = false
 				break
 			}
+		}
+
+		// Check elapsed time and, if necessary, wait for next frame
+		if time.Since(startTime) < time.Second/fps {
+			time.Sleep((time.Second / fps) - time.Since(startTime))
 		}
 
 	}
