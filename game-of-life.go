@@ -13,7 +13,7 @@ const (
 	gameSizeX, gameSizeY = 128, 128 //Default game size
 	cellSizeX, cellSizeY = 5, 5     //Size in pixes of each cell for SDL Window
 	chanceOfLive         = 0.2      //On randomize, the chance that each cell is populated
-	resetFactor          = 90       //If less than 1/resetFactor cells change in a generation, game will be restart
+	resetFactor          = 99       //If less than 1/resetFactor cells change in a generation, game will be restart
 	fps                  = 25       // Game loop will slow itself down to match target
 )
 
