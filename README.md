@@ -1,8 +1,8 @@
-# Game of Life [![Build Status](https://travis-ci.com/hexvalid/game-of-life.svg?branch=master)](https://travis-ci.com/hexvalid/game-of-life) 
+# Game of Life [![Build Status](https://travis-ci.com/hexvalid/game-of-life.svg?branch=master)](https://travis-ci.com/hexvalid/game-of-life)  [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+                                                                                                                                              
+
 
 [Conway's Game of Life](http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)  with with Test Driven Methodology implementation in Go + SDL
-
-![screenshot](.github/screenshot.png)
 
 
 ## Getting Source
@@ -47,5 +47,10 @@ PASS
 ok  	github.com/hexvalid/game-of-life
 ```
 
+_Tested with Go v1.13.5 and SDL2 v2.0.10 on Gentoo Linux (kernel-5.5.2-r1)_
 
-[releases]: https://github.com/hexvalid/game-of-life/releases
+## Screenshot
+![screenshot](.github/screenshot.png)
+
+## License
+GNU General Public License v3.0 - see [LICENSE](LICENSE) file.
