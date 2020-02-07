@@ -1,4 +1,5 @@
-# Game of Life
+# Game of Life [![Build Status](https://travis-ci.com/hexvalid/game-of-life.svg?branch=master)](https://travis-ci.com/hexvalid/game-of-life) 
+
 [Conway's Game of Life](http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)  with with Test Driven Methodology implementation in Go + SDL
 
 ## Getting 
