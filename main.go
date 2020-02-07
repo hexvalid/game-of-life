@@ -2,11 +2,17 @@ package main
 
 import (
 	"fmt"
+	"github.com/veandco/go-sdl2/sdl"
 	"math/rand"
+	"runtime"
+	"time"
 )
 
 const (
-	chanceOfLive = 0.5 //On randomize, the chance that each cell is populated
+	gameSizeX, gameSizeY = 256, 256 //Default game size
+	cellSizeX, cellSizeY = 3, 3     //Size in pixes of each cell for SDL Window
+	chanceOfLive         = 0.5      //On randomize, the chance that each cell is populated
+	resetFactor          = 100      //If less than 1/resetFactor cells change in a generation, game will be restart
 )
 
 type game struct {
@@ -175,9 +181,72 @@ func (g *game) DebugPrint() {
 		}
 		fmt.Print("\n")
 	}
+	fmt.Print("\n")
+}
+
+// Draw Game Table to SDL Surface
+func (g *game) DrawGame(surface *sdl.Surface) {
+	// First create a dark background
+	bgrect := sdl.Rect{X: 0, Y: 0, W: int32(g.xSize) * cellSizeX, H: int32(g.ySize) * cellSizeY}
+	surface.FillRect(&bgrect, 0x11111111)
+	for x := 0; x < g.xSize; x++ {
+		for y := 0; y < g.ySize; y++ {
+			if g.GetCell(x, y) {
+				// This cell is alive, draw it
+				rect := sdl.Rect{X: int32(x * cellSizeX), Y: int32(y * cellSizeY), W: cellSizeX, H: cellSizeY}
+				surface.FillRect(&rect, 0x00991111)
+			}
+		}
+	}
 }
 
 // Run Program
 func main() {
+	var g = NewGame(gameSizeX, gameSizeY)
+
+	rand.Seed(time.Now().UnixNano())
+	runtime.LockOSThread()
+
+	if err := sdl.Init(sdl.INIT_VIDEO); err != nil {
+		panic(err)
+	}
+
+	defer sdl.Quit()
+	window, err := sdl.CreateWindow("Game of Life", 250, 250,
+		int32(g.xSize)*cellSizeX, int32(g.ySize)*cellSizeY, sdl.WINDOW_SHOWN)
+	if err != nil {
+		panic(err)
+	}
+	defer window.Destroy()
+
+	// Initialize surface we'll be using
+	surface, err := window.GetSurface()
+	if err != nil {
+		panic(err)
+	}
+
+	running := true
+	for running {
+
+		g.DrawGame(surface)
+		window.UpdateSurface()
+		g.CreatePlan()
+		changed := g.RunPlan()
+
+		// If less than totalCells / resetFactor cells are changed, reinitialize
+		if changed < (g.xSize*g.ySize)/resetFactor {
+			g.Randomize()
+		}
+
+		// Handle any SDL events that come in
+		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
+			switch event.(type) {
+			case *sdl.QuitEvent:
+				running = false
+				break
+			}
+		}
+
+	}
 
 }
