@@ -1,0 +1,10 @@
+sudo: false
+
+language: go
+
+go:
+  - master
+
+script:
+  - go build -x -v ./game-of-life.go
+  - go test *.go
