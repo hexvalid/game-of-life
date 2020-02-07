@@ -21,6 +21,4 @@ before_install:
 
 
 script:
-  - go build ../{sdl,gfx,img,mix,ttf}
   - go build -x -v ./game-of-life.go
-  - go test *.go

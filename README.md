@@ -18,6 +18,8 @@ $GOPATH/bin/game-of-life
 ```
 **NOTE:** `go install` commands  just compile the executable file and move it to `$GOPATH/bin` destination.
 
+Also pre-built binaries can download from the [releases](https://github.com/hexvalid/game-of-life/releases) page. 
+
 ## Testing
 ```
 go test -v github.com/hexvalid/game-of-life
@@ -44,3 +46,6 @@ Example output of tests:
 PASS
 ok  	github.com/hexvalid/game-of-life
 ```
+
+
+[releases]: https://github.com/hexvalid/game-of-life/releases
