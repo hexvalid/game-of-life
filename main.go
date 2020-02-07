@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type game struct {
 	xSize int
@@ -55,8 +57,11 @@ func (g *game) DebugPrint() {
 	}
 }
 
+//not yet implemented
+func (g *game) Run() {
+
+}
+
 func main() {
-	g := NewGame(3, 3)
-	g.SetCell(0, 0, true)
-	g.DebugPrint()
+
 }
